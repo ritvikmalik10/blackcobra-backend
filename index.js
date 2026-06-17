@@ -178,13 +178,9 @@ app.post('/api/ai-chat', async (req, res) => {
             generationConfig: { maxOutputTokens: 500 }
         });
 
-        const result = await chat.sendMessage(userMessage);
+ const result = await chat.sendMessage(userMessage);
 
-const reply = result.response.text();
-
-const result = await chat.sendMessage(userMessage);
-
-const reply = result.response.text();
+ const reply = result.response.text();
 res.status(200).json({
     reply
 });
