@@ -207,6 +207,8 @@ app.post('/api/ai-chat', async (req, res) => {
   console.log("AI ROUTE HIT");
 
   const { email, userMessage } = req.body;
+  console.log("EMAIL RECEIVED:", email);
+console.log("BODY:", req.body);
 
   try {
     const model = genAI.getGenerativeModel({
