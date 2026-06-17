@@ -199,7 +199,7 @@ app.post('/api/query', (req, res) => {
 // 🤖 UPDATED AI CHAT ROUTE (With Memory/History & Filtering)
 app.post('/api/ai-chat', async (req, res) => {
     console.log("AI ROUTE HIT");
-    const { userMessage, history } = req.body;
+    const { email, userMessage, history } = req.body;
     console.log("History:", history);
     try {
         const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
@@ -220,9 +220,16 @@ app.post('/api/ai-chat', async (req, res) => {
 
  const result = await chat.sendMessage(userMessage);
 
- const reply = result.response.text();
+const reply = result.response.text();
+
+await Chat.create({
+  email,
+  userMessage,
+  botReply: reply
+});
+
 res.status(200).json({
-    reply
+  reply
 });
     } catch (error) {
         console.error("AI Error:", error);
@@ -231,4 +238,18 @@ res.status(200).json({
 });
 app.listen(PORT, () => {
   console.log(`🚀 API Server dynamically processing on port : ${PORT}`);
+});
+app.get('/api/chats/:email', async (req, res) => {
+  try {
+    const chats = await Chat.find({
+      email: req.params.email
+    }).sort({ createdAt: 1 });
+
+    res.json(chats);
+
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to load chats"
+    });
+  }
 });
