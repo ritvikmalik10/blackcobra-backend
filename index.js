@@ -78,29 +78,68 @@ const BLACK_COBRA_DB = {
 
 
 
-// 1. Signup Route
 app.post('/api/auth/signup', async (req, res) => {
+  console.log("SIGNUP HIT:", req.body);
+
   try {
     const { email, password } = req.body;
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword });
+
+    const newUser = new User({
+      email,
+      password: hashedPassword
+    });
+
     await newUser.save();
-    res.status(201).json({ message: "User registered in DB" });
+
+    res.status(201).json({
+      message: "User registered in DB"
+    });
+
   } catch (err) {
-    res.status(400).json({ error: "Email already exists" });
+    console.log("SIGNUP ERROR:", err);
+
+    res.status(400).json({
+      error: "Email already exists"
+    });
   }
 });
 
-// 2. Login Route
 app.post('/api/auth/login', async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) return res.status(401).json({ error: "User not found" });
+  console.log("LOGIN HIT:", req.body);
 
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) return res.status(401).json({ error: "Invalid password" });
+  try {
+    const { email, password } = req.body;
 
-  res.status(200).json({ status: "Authenticated", email: user.email });
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({
+        error: "User not found"
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        error: "Invalid password"
+      });
+    }
+
+    res.status(200).json({
+      status: "Authenticated",
+      email: user.email
+    });
+
+  } catch (err) {
+    console.log("LOGIN ERROR:", err);
+
+    res.status(500).json({
+      error: "Server error"
+    });
+  }
 });
 
 // 📈 Endpoint 1: Base Operational Status Diagnostics
