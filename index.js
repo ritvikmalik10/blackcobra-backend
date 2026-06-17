@@ -217,11 +217,11 @@ app.post('/api/ai-chat', async (req, res) => {
       }));
 
     const chat = model.startChat({
-      history: chatHistory.slice(0, -1),
-      generationConfig: {
-        maxOutputTokens: 500
-      }
-    });
+  history: [],
+  generationConfig: {
+    maxOutputTokens: 500
+  }
+});
 
     const result = await chat.sendMessage(userMessage);
 
