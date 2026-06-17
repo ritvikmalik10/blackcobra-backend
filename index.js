@@ -97,7 +97,8 @@ app.post('/api/auth/signup', async (req, res) => {
       message: "User registered in DB"
     });
 
-  } catch (err) {
+  }
+   catch (err) {
     console.log("SIGNUP ERROR:", err);
 
     res.status(400).json({
