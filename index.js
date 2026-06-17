@@ -232,12 +232,11 @@ console.log("BODY:", req.body);
       botReply: reply
     });
 
-    await Chat.create({
-      email,
-      userMessage,
-      botReply: reply
-    });
-
+   await Chat.create({
+  email: email || "test@blackcobra.ai",
+  userMessage,
+  botReply: reply
+});
     console.log("Chat Saved Successfully");
 
     res.status(200).json({
