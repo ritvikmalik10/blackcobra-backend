@@ -272,7 +272,21 @@ app.get('/api/chats/:email', async (req, res) => {
     });
   }
 });
+const firstUserIndex = chatHistory.findIndex(
+  msg => msg.role === 'user'
+);
 
+const validHistory =
+  firstUserIndex >= 0
+    ? chatHistory.slice(firstUserIndex)
+    : [];
+
+  const chat = model.startChat({
+  history: validHistory.slice(0, -1),
+  generationConfig: {
+    maxOutputTokens: 500
+  }
+});
 
 // 🚀 SERVER START
 app.listen(PORT, () => {
