@@ -221,13 +221,13 @@ app.post('/api/ai-chat', async (req, res) => {
  const result = await chat.sendMessage(userMessage);
 
 const reply = result.response.text();
-
+console.log("Saving chat...");
 await Chat.create({
   email,
   userMessage,
   botReply: reply
 });
-
+console.log("Chat saved Successfully");
 res.status(200).json({
   reply
 });
