@@ -210,7 +210,7 @@ app.post('/api/ai-chat', async (req, res) => {
 
   try {
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.5-flash"
+      model: "gemini-3.1-pro"
     });
 
     const chat = model.startChat({
