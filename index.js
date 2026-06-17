@@ -221,7 +221,11 @@ app.post('/api/ai-chat', async (req, res) => {
  const result = await chat.sendMessage(userMessage);
 
 const reply = result.response.text();
-console.log("Saving chat...");
+console.log("Saving Chat Data:", {
+  email,
+  userMessage,
+  botReply: reply
+});
 await Chat.create({
   email,
   userMessage,
@@ -231,11 +235,12 @@ console.log("Chat saved Successfully");
 res.status(200).json({
   reply
 });
-    } catch (error) {
-        console.error("AI Error:", error);
-        res.status(500).json({ error: "AI service error" });
-    }
-});
+}catch (error) {
+  console.error("AI Error FULL:", error);
+  res.status(500).json({
+    error: error.message
+  });
+}
 app.listen(PORT, () => {
   console.log(`🚀 API Server dynamically processing on port : ${PORT}`);
 });
