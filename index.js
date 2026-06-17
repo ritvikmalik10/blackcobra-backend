@@ -38,6 +38,7 @@ const User = mongoose.model('User', UserSchema);
 
 // Setup Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+console.log("API KEY EXISTS:", !!process.env.GEMINI_API_KEY);
 
 // 🔒 Security & Data Middlewares
 app.use(express.json());
@@ -198,61 +199,6 @@ app.post('/api/query', (req, res) => {
 // 🤖 UPDATED AI CHAT ROUTE (With Memory/History)
 // 🤖 UPDATED AI CHAT ROUTE (With Memory/History & Filtering)
 // 🤖 AI CHAT ROUTE
-app.post('/api/ai-chat', async (req, res) => {
-  console.log("AI ROUTE HIT");
-
-  const { email, userMessage, history } = req.body;
-  console.log("History:", history);
-
-  try {
-    const model = genAI.getGenerativeModel({
-      model: "gemini-3.5-flash"
-    });
-
-    const chatHistory = (history || [])
-      .filter(msg => msg.sender === 'user' || msg.sender === 'bot')
-      .map(msg => ({
-        role: msg.sender === 'user' ? 'user' : 'model',
-        parts: [{ text: msg.text }]
-      }));
-
-    const chat = model.startChat({
-  history: [],
-  generationConfig: {
-    maxOutputTokens: 500
-  }
-});
-
-    const result = await chat.sendMessage(userMessage);
-
-    const reply = result.response.text();
-
-    console.log("Saving Chat Data:", {
-      email,
-      userMessage,
-      botReply: reply
-    });
-
-    await Chat.create({
-      email,
-      userMessage,
-      botReply: reply
-    });
-
-    console.log("Chat Saved Successfully");
-
-    res.status(200).json({
-      reply
-    });
-
-  } catch (error) {
-    console.error("AI Error FULL:", error);
-
-    res.status(500).json({
-      error: error.message
-    });
-  }
-});
 
 
 // 📜 CHAT HISTORY ROUTE
@@ -297,12 +243,12 @@ app.post('/api/ai-chat', async (req, res) => {
     });
 
   } catch (error) {
-    console.error("AI Error FULL:", error);
+  console.error("AI Error FULL:", error);
 
-    res.status(500).json({
-      error: error.message
-    });
-  }
+  return res.status(200).json({
+    reply: `AI ERROR: ${error.message}`
+  });
+}
 });
 
 

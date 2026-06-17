@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "28cb2081-585e-43e4-ab86-8a04c0bda0fd"
+      }
+    },
+    "android": {
+      "package": "com.ritvikmalik.blackcobrabackend"
+    }
+  }
+}
