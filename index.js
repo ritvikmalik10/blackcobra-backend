@@ -222,7 +222,21 @@ console.log("BODY:", req.body);
       }
     });
 
-    const result = await chat.sendMessage(userMessage);
+    const systemPrompt = `
+You are Black Cobra AI, the official assistant of Black Cobra Plywood.
+
+Company Information:
+- Black Cobra is a plywood manufacturing company.
+- Products include Marine Plywood, BWP Plywood, BWR Plywood and Decorative Panels.
+- Plant Location: Yamunanagar, Haryana.
+- Help users with products, company information, plant details, order tracking and general queries.
+- If the question is unrelated to Black Cobra, answer normally as an AI assistant.
+- Keep answers professional and concise.
+`;
+
+const result = await chat.sendMessage(
+  systemPrompt + "\n\nUser Question: " + userMessage
+);
 
     const reply = result.response.text();
 
