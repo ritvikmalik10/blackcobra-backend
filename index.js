@@ -256,6 +256,57 @@ app.post('/api/ai-chat', async (req, res) => {
 
 
 // 📜 CHAT HISTORY ROUTE
+// 🤖 AI CHAT ROUTE
+app.post('/api/ai-chat', async (req, res) => {
+  console.log("AI ROUTE HIT");
+
+  const { email, userMessage } = req.body;
+
+  try {
+    const model = genAI.getGenerativeModel({
+      model: "gemini-3.5-flash"
+    });
+
+    const chat = model.startChat({
+      history: [],
+      generationConfig: {
+        maxOutputTokens: 500
+      }
+    });
+
+    const result = await chat.sendMessage(userMessage);
+
+    const reply = result.response.text();
+
+    console.log("Saving Chat Data:", {
+      email,
+      userMessage,
+      botReply: reply
+    });
+
+    await Chat.create({
+      email,
+      userMessage,
+      botReply: reply
+    });
+
+    console.log("Chat Saved Successfully");
+
+    res.status(200).json({
+      reply
+    });
+
+  } catch (error) {
+    console.error("AI Error FULL:", error);
+
+    res.status(500).json({
+      error: error.message
+    });
+  }
+});
+
+
+// 📜 CHAT HISTORY ROUTE
 app.get('/api/chats/:email', async (req, res) => {
   try {
     const chats = await Chat.find({
@@ -272,21 +323,7 @@ app.get('/api/chats/:email', async (req, res) => {
     });
   }
 });
-const firstUserIndex = chatHistory.findIndex(
-  msg => msg.role === 'user'
-);
 
-const validHistory =
-  firstUserIndex >= 0
-    ? chatHistory.slice(firstUserIndex)
-    : [];
-
-  const chat = model.startChat({
-  history: validHistory.slice(0, -1),
-  generationConfig: {
-    maxOutputTokens: 500
-  }
-});
 
 // 🚀 SERVER START
 app.listen(PORT, () => {
